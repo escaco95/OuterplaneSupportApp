@@ -31,8 +31,10 @@ description: Google Play Store 앱 페이지에서 공식 아이콘 이미지를
 ### 2. 스크립트 실행 (앱 ID 모드)
 
 ```powershell
-& "d:\Personal Projects\HTML\OuterplaneApp\.claude\skills\create-app-icon\create-app-icon.ps1" -AppId "com.smilegate.outerplane.stove.google"
+& ".\.claude\skills\create-app-icon\create-app-icon.ps1" -AppId "com.smilegate.outerplane.stove.google"
 ```
+
+(에이전트의 cwd 가 repo root 인 경우. 다른 위치라면 해당 `.ps1` 절대/상대 경로로 호출.)
 
 기본 출력 경로: `assets\icon.ico` (프로젝트 루트 기준).
 

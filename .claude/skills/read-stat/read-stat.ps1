@@ -41,8 +41,10 @@ public static class MaskSim {
 '@
 }
 
-$SCREEN_PROFILE = "d:\Personal Projects\HTML\OuterplaneApp\assets\profiles\precision-craft.json"
-$STATS_PATH     = "d:\Personal Projects\HTML\OuterplaneApp\assets\profiles\stat-references.json"
+$REPO_ROOT      = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..")).Path
+$SCREEN_PROFILE = Join-Path $REPO_ROOT "assets\profiles\precision-craft.json"
+$STATS_PATH     = Join-Path $REPO_ROOT "assets\profiles\stat-references.json"
+$LAST_SCAN_PATH = Join-Path $REPO_ROOT ".temp\last-scan.png"
 
 $DEFAULT_NAME_NX = 0.7356; $DEFAULT_NAME_NW = 0.1191; $DEFAULT_NAME_NH = 0.0534
 $DEFAULT_NAME_NY = @(0.2791, 0.3680, 0.4569, 0.5458)
@@ -153,7 +155,9 @@ function Get-CanonicalBuffer {
   [System.Runtime.InteropServices.Marshal]::Copy($data.Scan0, $bytes, 0, $bytes.Length)
   $resized.UnlockBits($data)
   # Save canonical capture for visual verification
-  $resized.Save("d:\Personal Projects\HTML\OuterplaneApp\.temp\last-scan.png", [System.Drawing.Imaging.ImageFormat]::Png)
+  $lastScanDir = [System.IO.Path]::GetDirectoryName($LAST_SCAN_PATH)
+  if ($lastScanDir -and -not (Test-Path $lastScanDir)) { New-Item -ItemType Directory -Path $lastScanDir -Force | Out-Null }
+  $resized.Save($LAST_SCAN_PATH, [System.Drawing.Imaging.ImageFormat]::Png)
   $resized.Dispose()
 
   $screenJson = [System.IO.File]::ReadAllText($SCREEN_PROFILE, [System.Text.Encoding]::UTF8)

@@ -45,7 +45,8 @@ $MAX_ITER = 100
 
 # Valuable stat set loaded from config.json (external UTF-8 JSON to avoid PS 5.1
 # CP949 parse corruption of Korean string literals inside .ps1 source files)
-$CONFIG_PATH = "d:\Personal Projects\HTML\OuterplaneApp\.claude\skills\auto-reroll-until-valuable\config.json"
+$REPO_ROOT   = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..")).Path
+$CONFIG_PATH = Join-Path $PSScriptRoot "config.json"
 $configJson = [System.IO.File]::ReadAllText($CONFIG_PATH, [System.Text.Encoding]::UTF8)
 $configObj = $configJson | ConvertFrom-Json
 $VALUABLE = @($configObj.valuable)
@@ -54,7 +55,7 @@ if ($ASSUMED_HIT_RATE -le 0 -or $ASSUMED_HIT_RATE -ge 1) { $ASSUMED_HIT_RATE = 0
 
 # Cumulative state — attempts & hits across all script invocations. Used for
 # luck percentile via geometric-distribution survival function P(streak >= N).
-$STATE_PATH = "d:\Personal Projects\HTML\OuterplaneApp\.temp\auto-reroll-state.json"
+$STATE_PATH = Join-Path $REPO_ROOT ".temp\auto-reroll-state.json"
 
 # Reroll click target (normalized within RenderWindow) — from reroll-option.ps1
 $CLICK_NX = 0.6045
@@ -72,9 +73,9 @@ $SETTLE_MAX_MS  = 3500
 $CLICK_GAP_MS = 10
 
 # Paths
-$SCREEN_PROFILE = "d:\Personal Projects\HTML\OuterplaneApp\assets\profiles\precision-craft.json"
-$STATS_PATH     = "d:\Personal Projects\HTML\OuterplaneApp\assets\profiles\stat-references.json"
-$LAST_SCAN_PATH = "d:\Personal Projects\HTML\OuterplaneApp\.temp\last-scan.png"
+$SCREEN_PROFILE = Join-Path $REPO_ROOT "assets\profiles\precision-craft.json"
+$STATS_PATH     = Join-Path $REPO_ROOT "assets\profiles\stat-references.json"
+$LAST_SCAN_PATH = Join-Path $REPO_ROOT ".temp\last-scan.png"
 
 # Stat ROI defaults (fallback if stat-references.json is missing/empty)
 $DEFAULT_NAME_NX = 0.7356; $DEFAULT_NAME_NW = 0.1191; $DEFAULT_NAME_NH = 0.0534

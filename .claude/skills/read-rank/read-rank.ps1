@@ -87,7 +87,8 @@ function Invoke-Poc {
   $resized.UnlockBits($data); $resized.Dispose()
 
   # --- 5. Screen validation (histogram check) ---
-  $profilePath = "d:\Personal Projects\HTML\OuterplaneApp\assets\profiles\precision-craft.json"
+  $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..")).Path
+  $profilePath = Join-Path $repoRoot "assets\profiles\precision-craft.json"
   $jsonText = [System.IO.File]::ReadAllText($profilePath, [System.Text.Encoding]::UTF8)
   $screenProfile = $jsonText | ConvertFrom-Json
   if (-not $screenProfile -or -not $screenProfile.rois) { "FAIL: Could not load profile"; return }

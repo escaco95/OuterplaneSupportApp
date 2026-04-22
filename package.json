@@ -18,6 +18,7 @@
     "directories": {
       "output": "release"
     },
+    "afterPack": "./scripts/afterPack.cjs",
     "files": [
       "dist/**/*",
       "!dist/**/__tests__/**",
@@ -43,8 +44,8 @@
         }
       ],
       "artifactName": "${productName}-${version}-win-x64.zip",
-      "signAndEditExecutable": false,
-      "icon": "assets/icon.ico"
+      "icon": "assets/icon.ico",
+      "signAndEditExecutable": false
     }
   },
   "devDependencies": {
@@ -54,6 +55,7 @@
     "electron-builder": "^26.8.1",
     "png-to-ico": "^3.0.1",
     "pngjs": "^7.0.0",
+    "rcedit": "^5.0.2",
     "typescript": "^6.0.3"
   },
   "dependencies": {

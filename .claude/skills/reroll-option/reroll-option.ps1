@@ -84,7 +84,8 @@ function Invoke-Poc {
   $resized.UnlockBits($data); $resized.Dispose()
 
   # --- 6. Load reference profile (explicit UTF-8 to handle BOM-less Korean) ---
-  $screenProfilePath = "d:\Personal Projects\HTML\OuterplaneApp\assets\profiles\precision-craft.json"
+  $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..")).Path
+  $screenProfilePath = Join-Path $repoRoot "assets\profiles\precision-craft.json"
   $jsonText = [System.IO.File]::ReadAllText($screenProfilePath, [System.Text.Encoding]::UTF8)
   $screenProfile = $jsonText | ConvertFrom-Json
   if (-not $screenProfile -or -not $screenProfile.rois) { "FAIL: Could not load profile"; return }

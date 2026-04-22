@@ -26,8 +26,10 @@ description: 정밀 제작 화면의 우측 "변경 서브 옵션(To-Be)" 패널
 ### 1. 스크립트 실행
 
 ```powershell
-& "d:\Personal Projects\HTML\OuterplaneApp\.claude\skills\read-stat\read-stat.ps1"
+& ".\.claude\skills\read-stat\read-stat.ps1"
 ```
+
+(에이전트의 cwd 가 repo root 인 경우. 다른 위치라면 해당 `.ps1` 절대/상대 경로로 호출.)
 
 ### 2. 출력 해석
 

@@ -36,8 +36,10 @@ rank 는 0~4, `rank ≥ 3` 을 "rank 3" 으로 관대 해석 (rank 4 는 rank 3 
 ### 1. 실행
 
 ```powershell
-& "d:\Personal Projects\HTML\OuterplaneApp\.claude\skills\auto-reroll-until-valuable\auto-reroll-until-valuable.ps1"
+& ".\.claude\skills\auto-reroll-until-valuable\auto-reroll-until-valuable.ps1"
 ```
+
+(에이전트의 cwd 가 repo root 인 경우. 다른 위치라면 해당 `.ps1` 절대/상대 경로로 호출.)
 
 ### 2. 출력 해석
 

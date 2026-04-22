@@ -3,10 +3,15 @@ param(
   [string]$AppId,                           # e.g. "com.smilegate.outerplane.stove.google"
   [string]$IconUrl,                         # e.g. "https://play-lh.googleusercontent.com/<token>"
 
-  [string]$OutputPath = "d:\Personal Projects\HTML\OuterplaneApp\assets\icon.ico",
+  [string]$OutputPath,                      # default: <repo-root>\assets\icon.ico (resolved below)
   [double]$CornerRadiusRatio = 0.22,        # 22% of side — matches Android 13/iOS-ish corner
   [int]$SourceSize = 512                    # Play CDN serves on-demand at requested size
 )
+
+if (-not $OutputPath) {
+  $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..")).Path
+  $OutputPath = Join-Path $repoRoot "assets\icon.ico"
+}
 
 # ICO target sizes. Multi-entry ICO so Explorer/taskbar/Start picks the right
 # resolution — downscales below 24px end up mushy if we only ship large sizes.
