@@ -62,7 +62,6 @@
 :root {
   --caption-h: 36px;
   --nav-w: 56px;
-  --footer-h: 36px;
 }
 
 * { box-sizing: border-box; }
@@ -591,14 +590,6 @@ html, body {
 }
 .select:hover { background: var(--hover); }
 .select:focus { border-color: var(--accent); }
-
-/* ---------- footer ---------- */
-.footer {
-  height: var(--footer-h);
-  border-top: 1px solid var(--border);
-  background: var(--surface);
-  flex-shrink: 0;
-}
 
 /* ---------- craft (auto-reroll) ---------- */
 .craft-section { max-width: 640px; }
