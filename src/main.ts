@@ -579,8 +579,8 @@ function startPicker(): Promise<string | null> {
 
 function createWindow(): void {
   const win = new BrowserWindow({
-    width: 1100,
-    height: 720,
+    width: 720,
+    height: 480,
     minWidth: 720,
     minHeight: 480,
     frame: false,
