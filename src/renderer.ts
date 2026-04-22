@@ -4,8 +4,9 @@ const DEFAULT_THEME = 'light';
 
 const LINKS_KEY = 'community-links';
 const DEFAULT_LINKS: CommunityLink[] = [
-  { id: 'wiki', name: '아우터플레인 위키', url: 'https://kr.outerpedia.com/', description: '게임 정보 백과' },
-  { id: 'channel', name: '아우터플레인 채널', url: 'https://arca.live/b/outerplane', description: '유저 커뮤니티' },
+  { id: 'wiki', name: '아우터플레인 위키', url: 'https://kr.outerpedia.com/', description: '게임 정보 백과', section: '커뮤니티' },
+  { id: 'channel', name: '아우터플레인 채널', url: 'https://arca.live/b/outerplane', description: '유저 커뮤니티', section: '커뮤니티' },
+  { id: 'bug-report', name: '버그 제보', url: 'https://github.com/escaco95/OuterplaneSupportApp/issues/new', description: 'GitHub Issues 로 이동', section: '버그 제보' },
 ];
 
 const $ = <T extends HTMLElement>(id: string): T => {
@@ -26,7 +27,10 @@ function loadLinks(): CommunityLink[] {
     return parsed.filter(
       (l): l is CommunityLink =>
         !!l && typeof l.id === 'string' && typeof l.name === 'string' && typeof l.url === 'string'
-    );
+    ).map((l) => ({
+      ...l,
+      section: typeof l.section === 'string' ? l.section : undefined,
+    }));
   } catch {
     return structuredClone(DEFAULT_LINKS);
   }
@@ -40,46 +44,83 @@ let communityLinks: CommunityLink[] = loadLinks();
 let editingId: string | null = null;
 
 /* ---------- home rendering ---------- */
-const linkGrid = $<HTMLDivElement>('link-grid');
+const linkSections = $<HTMLDivElement>('link-sections');
+
+function sectionKey(link: CommunityLink): string {
+  return (link.section ?? '').trim();
+}
+
+function groupBySection(links: CommunityLink[]): Array<[string, CommunityLink[]]> {
+  const order: string[] = [];
+  const byKey = new Map<string, CommunityLink[]>();
+  for (const link of links) {
+    const key = sectionKey(link);
+    if (!byKey.has(key)) {
+      order.push(key);
+      byKey.set(key, []);
+    }
+    byKey.get(key)!.push(link);
+  }
+  return order.map((k) => [k, byKey.get(k)!]);
+}
+
+function createTile(link: CommunityLink): HTMLButtonElement {
+  const tile = document.createElement('button');
+  tile.type = 'button';
+  tile.className = 'link-tile';
+  tile.dataset.tooltip = link.description
+    ? `${link.name}\n${link.description}\n${link.url}`
+    : `${link.name}\n${link.url}`;
+  tile.setAttribute('aria-label', link.name);
+
+  const fallback = document.createElement('span');
+  fallback.className = 'link-tile__fallback';
+  fallback.textContent = (link.name || '?').trim().charAt(0);
+  tile.appendChild(fallback);
+
+  const setIcon = (src: string): void => {
+    const img = document.createElement('img');
+    img.className = 'link-tile__icon';
+    img.alt = '';
+    img.src = src;
+    img.addEventListener('error', () => {
+      img.replaceWith(fallback);
+    });
+    fallback.replaceWith(img);
+  };
+
+  if (window.favicon) {
+    window.favicon
+      .get(link.url)
+      .then((src) => {
+        if (src) setIcon(src);
+      })
+      .catch(() => {});
+  }
+
+  tile.addEventListener('click', () => window.links.open(link.url));
+  return tile;
+}
 
 function renderHome(): void {
-  linkGrid.replaceChildren();
-  for (const link of communityLinks) {
-    const tile = document.createElement('button');
-    tile.type = 'button';
-    tile.className = 'link-tile';
-    tile.dataset.tooltip = link.description
-      ? `${link.name}\n${link.description}\n${link.url}`
-      : `${link.name}\n${link.url}`;
-    tile.setAttribute('aria-label', link.name);
+  linkSections.replaceChildren();
+  for (const [name, group] of groupBySection(communityLinks)) {
+    const section = document.createElement('section');
+    section.className = 'link-section';
 
-    const fallback = document.createElement('span');
-    fallback.className = 'link-tile__fallback';
-    fallback.textContent = (link.name || '?').trim().charAt(0);
-    tile.appendChild(fallback);
-
-    const setIcon = (src: string): void => {
-      const img = document.createElement('img');
-      img.className = 'link-tile__icon';
-      img.alt = '';
-      img.src = src;
-      img.addEventListener('error', () => {
-        img.replaceWith(fallback);
-      });
-      fallback.replaceWith(img);
-    };
-
-    if (window.favicon) {
-      window.favicon
-        .get(link.url)
-        .then((src) => {
-          if (src) setIcon(src);
-        })
-        .catch(() => {});
+    if (name) {
+      const title = document.createElement('h3');
+      title.className = 'link-section__title';
+      title.textContent = name;
+      section.appendChild(title);
     }
 
-    tile.addEventListener('click', () => window.links.open(link.url));
-    linkGrid.appendChild(tile);
+    const grid = document.createElement('div');
+    grid.className = 'link-grid';
+    for (const link of group) grid.appendChild(createTile(link));
+    section.appendChild(grid);
+
+    linkSections.appendChild(section);
   }
 }
 
@@ -87,8 +128,23 @@ function renderHome(): void {
 const linkList = $<HTMLUListElement>('link-list');
 const linkEditor = $<HTMLFormElement>('link-editor');
 
-function editorInput(name: 'name' | 'description' | 'url'): HTMLInputElement {
+function editorInput(name: 'name' | 'description' | 'url' | 'section'): HTMLInputElement {
   return linkEditor.elements.namedItem(name) as HTMLInputElement;
+}
+
+const sectionSuggestions = $<HTMLDataListElement>('section-suggestions');
+
+function refreshSectionSuggestions(): void {
+  const seen = new Set<string>();
+  sectionSuggestions.replaceChildren();
+  for (const link of communityLinks) {
+    const key = sectionKey(link);
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    const opt = document.createElement('option');
+    opt.value = key;
+    sectionSuggestions.appendChild(opt);
+  }
 }
 
 function iconBtn(
@@ -110,6 +166,7 @@ function iconBtn(
 
 function renderSettingsList(): void {
   linkList.replaceChildren();
+  refreshSectionSuggestions();
   communityLinks.forEach((link, i) => {
     const li = document.createElement('li');
     li.className = 'link-row';
@@ -117,15 +174,25 @@ function renderSettingsList(): void {
     const info = document.createElement('div');
     info.className = 'link-row__info';
 
+    const nameRow = document.createElement('div');
+    nameRow.className = 'link-row__name-row';
     const name = document.createElement('span');
     name.className = 'link-row__name';
     name.textContent = link.name;
+    nameRow.appendChild(name);
+    const sectionLabel = sectionKey(link);
+    if (sectionLabel) {
+      const badge = document.createElement('span');
+      badge.className = 'link-row__section';
+      badge.textContent = sectionLabel;
+      nameRow.appendChild(badge);
+    }
 
     const url = document.createElement('span');
     url.className = 'link-row__url';
     url.textContent = link.url;
 
-    info.append(name, url);
+    info.append(nameRow, url);
 
     const actions = document.createElement('div');
     actions.className = 'link-row__actions';
@@ -166,6 +233,7 @@ function openEditor(link: CommunityLink | null): void {
   editorInput('name').value = link ? link.name : '';
   editorInput('description').value = link ? link.description || '' : '';
   editorInput('url').value = link ? link.url : '';
+  editorInput('section').value = link ? link.section || '' : '';
   editorInput('name').focus();
 }
 
@@ -186,6 +254,7 @@ linkEditor.addEventListener('submit', (e) => {
     name: editorInput('name').value.trim(),
     description: editorInput('description').value.trim(),
     url: editorInput('url').value.trim(),
+    section: editorInput('section').value.trim(),
   };
   if (!data.name || !data.url) return;
   try {

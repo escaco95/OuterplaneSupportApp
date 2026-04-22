@@ -47,8 +47,8 @@
 
         <main class="content">
           <section class="page is-active" data-page="home">
-            <h2 class="page__title">커뮤니티</h2>
-            <div class="link-grid" id="link-grid"></div>
+            <h2 class="page__title">홈</h2>
+            <div class="link-sections" id="link-sections"></div>
           </section>
           <section class="page" data-page="tools">
             <h2 class="page__title">정밀 제작 도우미</h2>
@@ -198,6 +198,8 @@
                 <input name="name" class="link-editor__input" placeholder="이름" required />
                 <input name="description" class="link-editor__input" placeholder="설명 (선택)" />
                 <input name="url" type="url" class="link-editor__input" placeholder="https://..." required />
+                <input name="section" class="link-editor__input" placeholder="섹션 (선택 — 같은 이름끼리 그룹)" list="section-suggestions" />
+                <datalist id="section-suggestions"></datalist>
                 <div class="link-editor__actions">
                   <button type="button" class="btn-ghost" id="btn-link-cancel">취소</button>
                   <button type="submit" class="btn-primary">저장</button>

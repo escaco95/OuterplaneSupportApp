@@ -3,6 +3,7 @@ interface CommunityLink {
   name: string;
   url: string;
   description?: string;
+  section?: string;
 }
 
 interface Window {
