@@ -1,123 +1,90 @@
-# README.md
+# 아우터플레인 앱
 
-이 프로젝트는 모바일 게임 `아우터플레인` 을 보다 편리하게 즐길 수 있도록 도와주는 애플리케이션입니다.
+모바일 게임 **아우터플레인** 을 더 편리하게 즐길 수 있도록 도와주는 Windows 전용 보조 앱입니다.
 
-이 문서에 작성되는 내용은 명확하고, 간결하게 작성되어야 합니다.
+- 커뮤니티 바로가기
+- 정밀 제작 자동 리롤
 
-## 기술 스택
+## 설치 및 실행
 
-- Windows 전용 (Win32 API 사용)
-- Electron 30 · TypeScript · koffi
-- 실행: `npm start` (tsc 빌드 후 electron 구동)
-- 테스트: `npm test` (detect 파이프라인 회귀 + craft 로직 unit test, Node 내장 `node:test`)
-- 배포: `npm run dist` (electron-builder 로 `release/OuterplaneApp-<ver>-win-x64.zip` 생성)
+1. [릴리즈 페이지](https://github.com/escaco95/OuterplaneSupportApp/releases) 에서 최신 `OuterplaneApp-<버전>-win-x64.zip` 을 내려받습니다.
+2. 원하는 위치에 압축을 풉니다.
+3. `OuterplaneApp.exe` 를 실행합니다.
 
-## 디자인 철학
+### 첫 실행 시 안내
 
-- modern, simple, clean
-- symbol rather than text
-- hover tooltip rather than text
-
-## 프로젝트 컨벤션
-
-### 폴더 구조
-
-```text
-.claude/          AI agent 설정 + skills (read-stat · register-stat · read-rank · reroll-option · auto-reroll-until-valuable)
-.temp/            dev 산출물 (캡처·ROI·crop·상태 스냅샷), gitignored
-.vscode/          IDE 설정
-assets/           런타임 리소스 (아이콘, 프로파일 JSON)
-dist/             tsc 출력, gitignored
-release/          electron-builder 출력 (zip), gitignored
-node_modules/     의존성, gitignored
-src/              TypeScript 소스
-  craft/          자동 리롤 루프 컨트롤러·상태 지속·settle·match
-  detect/          캡처 정규화·화면 검증·스탯/랭크 스캔 (binary mask + IoU)
-```
-
-### Versioning
-
-- App Version:
-  - YYYY.MM.DD(-PRERELEASE) 형식. 예: 2024.06.01, 2024.06.01-beta.1
-- Release Tag:
-  - release/YYYY-MM-DD(-PRERELEASE) 형식. 예: release/2024-06-01, release/2024-06-01-beta-1
-
-### Release / Packaging
-
-- do only when user explicitly requests a release or packaging
-- perform version bump
-- commit changes
-- tag release
-- build package (`npm run dist`)
-
-### .gitignore
-
-카테고리별 주석 헤더로 구분합니다.
-
-```text
-### Node Modules ###
-node_modules/
-dist/
-
-### AI Agents ###
-.claude/settings.local.json
-.temp/
-
-### Release Artifacts ###
-release/
-```
+- **Windows SmartScreen 경고** 가 나올 수 있습니다. "추가 정보" → "실행" 을 눌러 계속 진행하세요. (코드 서명이 되어 있지 않은 빌드이기 때문입니다.)
+- 처음 실행하면 `%APPDATA%\OuterplaneApp\` 폴더가 생성되고, 이곳에 설정·누적 통계·아이콘 캐시가 저장됩니다.
+- **Windows x64 전용** 입니다.
 
 ## 기능
 
-### 홈(커뮤니티로 이동)
+### 홈 — 커뮤니티 바로가기
 
-- 게임과 연관된 다양한 커뮤니티로 이동할 수 있는 버튼 목록 제공
+자주 방문하는 아우터플레인 관련 사이트를 버튼 한 번으로 열 수 있습니다.
+
+- 기본 제공 버튼
   - [아우터플레인 위키](https://kr.outerpedia.com/)
   - [아우터플레인 채널](https://arca.live/b/outerplane)
-- 설정 페이지에서 버튼 추가·수정·삭제 및 순서 변경
-- 설정 초기화 시 기본 커뮤니티 버튼으로 복원
+- 설정에서 버튼을 **추가 · 수정 · 삭제 · 순서 변경** 할 수 있습니다.
+- 실수로 지웠더라도, 설정 초기화로 기본 버튼을 되살릴 수 있습니다.
 
 ### 정밀 제작 도우미
 
-- **아우터플레인 앱 찾기**
-  - LDPlayer 창 탐색
-  - 여러 개면 반투명 선택 오버레이("이 창으로 결정" 라벨), backdrop 클릭으로 취소
-- **선택된 창 시각 추적**
-  - 게임 렌더 영역에 외곽 glow 유지
-  - 창 이동·리사이즈·모니터 전환 자동 추적
-  - 최소화 시 일시 숨김, 닫기 시 자동 해제, 재탐색 시 이전 glow 정리
-- **실시간 조건 검증 (glow 색상으로 표시)**
-  - 통과: 청색, 위반: 적색 + 중앙 사유 텍스트
-  - 판정 조건
-    - 해상도 1280×720 ~ 1305×734 (1280×720 +2%)
-    - 화면비 16:9 (±1.5%)
-    - 현재 화면이 정밀 제작 서브 옵션 선택 중 (~3s 연속 실패 시 경고; 단발 애니메이션 blip 은 무시)
-- **자동 리롤**
-  - 원하는 스탯(valuable) 다중 선택 (카탈로그 13종)
-  - 4-슬롯 위력 템플릿 (0 = 무관, 1-4 = 해당 위력 이상 1개 필요; 위치 무시, multiset 매칭)
-  - 최대 시도 설정, 누적 시도/성공/streak 표시
-  - 실행 중: 실시간 iter 로그 (100줄 cap, 토글 가능) + live 프리뷰 + 진행바 + 중단 버튼
-  - 종료 상태
-    - HIT: 조건 일치 프리뷰 표시 → 사용자가 수동 확정
-    - LIMIT: 최대 시도 도달
-    - 인식 실패: 스탯 인식 실패 시 프로덕션 종료 (개발자 문의 유도)
-    - FAIL: 창 소실 · 화면 가드 실패 · 사용자 중단 등
-  - 클릭 주입: `PostMessage(WM_LBUTTONDOWN/UP)` 로 사용자 커서 미개입
+정밀 제작 화면에서 원하는 옵션이 뜰 때까지 **자동으로 리롤** 해 주는 기능입니다.
+
+#### 준비
+
+1. **LDPlayer** 에서 아우터플레인을 실행하고 정밀 제작 화면을 띄웁니다.
+2. 본 앱에서 "아우터플레인 앱 찾기" 를 누릅니다.
+3. LDPlayer 창이 여러 개라면 반투명 선택 오버레이에서 원하는 창을 고르고 **"이 창으로 결정"** 을 클릭합니다. (잘못 눌렀다면 배경을 클릭해 취소)
+
+#### 창 상태 표시 (glow)
+
+선택한 창에는 외곽에 빛나는 테두리(glow)가 표시됩니다. 이 색으로 상태를 한눈에 알 수 있습니다.
+
+- 🔵 **파란색** — 조건 통과, 자동 리롤 가능
+- 🔴 **빨간색** — 조건 위반, 중앙에 사유 표시
+
+조건 위반 예시:
+
+- 해상도가 1280×720 범위를 벗어난 경우 (게임 해상도 설정 필요)
+- 화면비가 16:9 가 아닌 경우
+- 정밀 제작 서브 옵션 선택 화면이 아닌 경우
+
+창이 이동·리사이즈·모니터 전환을 해도 glow 가 자동으로 따라다니며, 창을 최소화하면 숨겨지고, 닫으면 자동으로 해제됩니다.
+
+#### 자동 리롤 설정
+
+- **원하는 스탯 선택** — 13종 카탈로그에서 원하는 valuable 스탯을 다중 선택합니다.
+- **위력 템플릿 (4칸)** — 각 칸에 요구 위력(1~4)을 입력합니다. `0` 은 "무관" 을 뜻합니다. 위치는 상관없고 **개수(multiset)로 매칭** 됩니다.
+  - 예: `3,3,0,0` 은 "3위력 이상이 2개 이상" 이면 완성.
+- **두 번째 템플릿 (선택)** — 보조 템플릿을 켜면 **둘 중 하나라도** 맞으면 완성으로 처리합니다.
+  - 예: `3,3,3,0` **또는** `3,3,2,2`
+- **최대 시도 횟수** — 목표에 도달하지 못해도 이 횟수에서 자동 중단합니다.
+
+#### 실행 중
+
+- 실시간 iter 로그 (최근 100줄까지 표시, 토글 가능)
+- 현재 프리뷰 · 진행바 · 누적 시도/성공/연속 성공 수치
+- 중단 버튼으로 언제든 멈출 수 있습니다.
+- 리롤 클릭은 **사용자 커서를 움직이지 않습니다.** (앱이 게임 창에 직접 클릭 메시지를 전달)
+
+#### 종료 상태
+
+- **HIT** — 조건에 맞는 프리뷰가 떴습니다. 프리뷰가 멈춘 상태이니 **게임에서 직접 확정** 하세요.
+- **LIMIT** — 설정한 최대 시도 횟수에 도달했습니다.
+- **인식 실패** — 스탯 인식에 실패했습니다. (이 경우 개발자에게 문의 바랍니다.)
+- **FAIL** — 창이 사라졌거나, 화면 조건이 깨졌거나, 사용자가 중단한 경우.
 
 ### 설정
 
-- 테마 설정
-- 앱 확대 배율 설정
-- 홈 화면 커뮤니티 버튼 (추가·수정·삭제·순서 변경·기본값 복원)
-- Danger Zone
-  - 앱 데이터 초기화 (설정 초기화)
+- **테마** — 라이트 / 다크 전환
+- **앱 확대 배율** — UI 전체 스케일 조정
+- **커뮤니티 버튼** — 홈 화면 버튼 관리 (추가 · 수정 · 삭제 · 순서 변경 · 기본값 복원)
+- **Danger Zone**
+  - **앱 데이터 초기화** — 모든 설정과 누적 통계를 지우고 초기 상태로 되돌립니다.
 
-## 배포
+## 변경 사항
 
-`npm run dist` 실행 시 `release/OuterplaneApp-<version>-win-x64.zip` 생성. 사용자는 zip 압축 해제 후 `OuterplaneApp.exe` 실행.
-
-주의:
-
-- 서명되지 않은 바이너리 — Windows SmartScreen 경고 나올 수 있음 ("추가 정보" → "실행")
-- Windows x64 전용
-- 처음 실행 시 `%APPDATA%\OuterplaneApp\` 에 사용자 데이터 (favicon 캐시, auto-reroll 누적 상태) 생성
+업데이트 기록과 주요 변경점은 [릴리즈 페이지](https://github.com/escaco95/OuterplaneSupportApp/releases) 에서 확인할 수 있습니다.
