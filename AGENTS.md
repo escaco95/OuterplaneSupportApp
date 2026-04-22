@@ -38,9 +38,9 @@ src/              TypeScript 소스
 ### Versioning
 
 - App Version:
-  - YYYY.MM.DD(-PRERELEASE) 형식. 예: 2024.06.01, 2024.06.01-beta.1
+  - YYYY.MM.DD.X(-PRERELEASE) 형식. 예: 2024.06.01.0, 2024.06.01.0-beta.1
 - Release Tag:
-  - release/YYYY-MM-DD(-PRERELEASE) 형식. 예: release/2024-06-01, release/2024-06-01-beta-1
+  - release/YYYY-MM-DD-X(-PRERELEASE) 형식. 예: release/2024-06-01-0, release/2024-06-01-0-beta-1
 
 ### Release / Packaging
 
