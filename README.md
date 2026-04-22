@@ -35,6 +35,13 @@ src/              TypeScript 소스
   detect/          캡처 정규화·화면 검증·스탯/랭크 스캔 (binary mask + IoU)
 ```
 
+### Versioning
+
+- App Version:
+  - YYYY.MM.DD(-PRERELEASE) 형식. 예: 2024.06.01, 2024.06.01-beta.1
+- Release Tag:
+  - release/YYYY-MM-DD(-PRERELEASE) 형식. 예: release/2024-06-01, release/2024-06-01-beta-1
+
 ### .gitignore
 
 카테고리별 주석 헤더로 구분합니다.
