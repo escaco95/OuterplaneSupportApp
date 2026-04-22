@@ -6,6 +6,7 @@ const LINKS_KEY = 'community-links';
 const DEFAULT_LINKS: CommunityLink[] = [
   { id: 'wiki', name: '아우터플레인 위키', url: 'https://kr.outerpedia.com/', description: '게임 정보 백과', section: '커뮤니티' },
   { id: 'channel', name: '아우터플레인 채널', url: 'https://arca.live/b/outerplane', description: '유저 커뮤니티', section: '커뮤니티' },
+  { id: 'curma-redeem', name: '리딤커마', url: 'https://redeem.curma.cc/ko/outerplane', description: '유저가 만든 쿠폰 모음 사이트', section: '쿠폰 정보' },
   { id: 'bug-report', name: '버그 제보', url: 'https://github.com/escaco95/OuterplaneSupportApp/issues/new', description: 'GitHub Issues 로 이동', section: '버그 제보' },
 ];
 
