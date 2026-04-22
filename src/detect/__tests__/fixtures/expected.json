@@ -1,0 +1,22 @@
+{
+  "description": "Known-good labels for detect module tests. Captured during POC/dev; if these labels look wrong, the scan logic has regressed — not the fixtures.",
+  "fixtures": {
+    "last-scan.png": {
+      "source": "auto-reroll-until-valuable.ps1 iter 61 (Pattern A success)",
+      "canonicalSize": [1280, 720],
+      "screenValid": true,
+      "stats": ["치명 확률%", "치명 피해%", "피해 증가%", "체력%"],
+      "ranks": [3, 3, 3, 3]
+    },
+    "ldplayer-capture.png": {
+      "source": "initial precision-craft screen profile capture (native LDPlayer resolution, pre-resize)",
+      "screenValid": true,
+      "note": "No stat/rank labels — this capture predates stat reference work. Used only for screen-validation regression."
+    },
+    "ldplayer-capture-roi.png": {
+      "source": "precision-craft capture with debug ROI boxes overlaid (red rectangles)",
+      "screenValid": true,
+      "note": "Overlays are drawn outside the screen-profile histogram ROIs, so validation still passes. Included as a robustness regression: the validator shouldn't over-reject based on incidental decoration elsewhere on screen."
+    }
+  }
+}

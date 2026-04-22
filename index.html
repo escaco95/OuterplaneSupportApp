@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OuterplaneApp</title>
+    <script>
+      (function () {
+        var t = localStorage.getItem('theme') || 'light';
+        document.documentElement.dataset.theme = t;
+      })();
+    </script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app" data-active-page="home">
+      <header class="caption">
+        <div class="caption__drag">
+          <span class="caption__title">Outerplane</span>
+        </div>
+        <div class="caption__controls">
+          <button type="button" class="cap-btn" id="btn-min" aria-label="최소화" data-tooltip="최소화">
+            <svg width="10" height="10" viewBox="0 0 10 10"><path d="M0 5h10" stroke="currentColor" stroke-width="1"/></svg>
+          </button>
+          <button type="button" class="cap-btn" id="btn-max" aria-label="최대화" data-tooltip="최대화">
+            <svg width="10" height="10" viewBox="0 0 10 10"><rect x="0.5" y="0.5" width="9" height="9" fill="none" stroke="currentColor" stroke-width="1"/></svg>
+          </button>
+          <button type="button" class="cap-btn cap-btn--close" id="btn-close" aria-label="닫기" data-tooltip="닫기">
+            <svg width="10" height="10" viewBox="0 0 10 10"><path d="M0 0l10 10M10 0L0 10" stroke="currentColor" stroke-width="1"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="body">
+        <nav class="nav">
+          <button type="button" class="nav__item is-active" data-page="home" aria-label="홈" data-tooltip="홈">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1V11z"/></svg>
+          </button>
+          <button type="button" class="nav__item" data-page="tools" aria-label="정밀 제작 도우미" data-tooltip="정밀 제작 도우미">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 4l6 6-10 10H4v-6L14 4z"/></svg>
+          </button>
+          <div class="nav__spacer"></div>
+          <button type="button" class="nav__item" data-page="settings" aria-label="설정" data-tooltip="설정">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+          </button>
+        </nav>
+
+        <main class="content">
+          <section class="page is-active" data-page="home">
+            <h2 class="page__title">커뮤니티</h2>
+            <div class="link-grid" id="link-grid"></div>
+          </section>
+          <section class="page" data-page="tools">
+            <h2 class="page__title">정밀 제작 도우미</h2>
+            <section class="settings-section">
+              <div class="settings-section__header">
+                <span class="settings-section__title">아우터플레인 앱 찾기</span>
+              </div>
+              <div class="app-finder">
+                <button type="button" class="app-finder__btn" id="btn-find-ldplayer" data-tooltip="실행 중인 LDPlayer 창 탐색" aria-label="LDPlayer 찾기">
+                  <img class="app-finder__icon" src="assets/ldplayer.png" alt="" />
+                  <span class="app-finder__label">LDPlayer</span>
+                </button>
+              </div>
+              <div class="tracking-status" id="tracking-status">선택된 창 없음</div>
+            </section>
+
+            <section class="settings-section craft-section">
+              <div class="settings-section__header">
+                <span class="settings-section__title">자동 리롤</span>
+              </div>
+
+              <div class="craft-view" data-craft-view="idle">
+                <div class="craft-field">
+                  <span class="craft-field__label" data-tooltip="Pattern 이 성립하려면 이 목록의 스탯만 rank 슬롯에 배정 가능">원하는 스탯</span>
+                  <div class="craft-valuable" id="craft-valuable"></div>
+                </div>
+
+                <div class="craft-field">
+                  <span class="craft-field__label" data-tooltip="각 슬롯에 필요한 최소 위력. 0 = 무관. 위치 무시 — 집합으로 매칭.">위력 요구사항</span>
+                  <div class="craft-template">
+                    <input type="number" min="0" max="4" class="craft-template__input" data-slot="0" value="3" aria-label="slot 1" />
+                    <input type="number" min="0" max="4" class="craft-template__input" data-slot="1" value="3" aria-label="slot 2" />
+                    <input type="number" min="0" max="4" class="craft-template__input" data-slot="2" value="3" aria-label="slot 3" />
+                    <input type="number" min="0" max="4" class="craft-template__input" data-slot="3" value="0" aria-label="slot 4" />
+                  </div>
+                  <div class="craft-field__hint" id="craft-template-hint"></div>
+                </div>
+
+                <div class="craft-field">
+                  <span class="craft-field__label">최대 시도</span>
+                  <input type="number" min="1" max="1000" class="craft-max" id="craft-max" value="50" aria-label="최대 시도 횟수" />
+                </div>
+
+                <div class="craft-cumulative" id="craft-cumulative"></div>
+
+                <div class="craft-actions">
+                  <button type="button" class="btn-primary craft-btn-primary" id="craft-start" data-tooltip="자동 리롤 시작">▶ 시작</button>
+                </div>
+              </div>
+
+              <div class="craft-view" data-craft-view="running" hidden>
+                <div class="craft-progress">
+                  <div class="craft-progress__head">
+                    <span class="craft-progress__counter" id="craft-progress-counter">0/0</span>
+                    <span class="craft-progress__meta" id="craft-progress-meta"></span>
+                  </div>
+                  <div class="craft-progress__bar"><div class="craft-progress__fill" id="craft-progress-fill"></div></div>
+                </div>
+
+                <div class="craft-preview" id="craft-preview"></div>
+
+                <div class="craft-log-section">
+                  <div class="craft-log-section__head">
+                    <span>최근 이터레이션</span>
+                    <button type="button" class="btn-ghost craft-log-toggle" id="craft-log-toggle" data-tooltip="로그 보이기/숨기기">숨기기</button>
+                  </div>
+                  <pre class="craft-log" id="craft-log"></pre>
+                </div>
+
+                <div class="craft-actions">
+                  <button type="button" class="btn-danger" id="craft-stop" data-tooltip="이번 iter 완료 후 중단">■ 중단</button>
+                </div>
+              </div>
+
+              <div class="craft-view" data-craft-view="terminal" hidden>
+                <div class="craft-terminal-head" id="craft-terminal-head"></div>
+                <div class="craft-preview" id="craft-terminal-preview"></div>
+                <div class="craft-terminal-body" id="craft-terminal-body"></div>
+                <div class="craft-actions">
+                  <button type="button" class="btn-primary" id="craft-restart">새 세션</button>
+                </div>
+              </div>
+            </section>
+          </section>
+          <section class="page" data-page="settings">
+            <h2 class="page__title">Settings</h2>
+            <div class="setting-row">
+              <span class="setting-row__label">Theme</span>
+              <div class="theme-picker" id="theme-picker">
+                <button type="button" class="theme-thumb" data-theme="light">
+                  <span class="theme-thumb__preview"></span>
+                  <span class="theme-thumb__label">Light</span>
+                </button>
+                <button type="button" class="theme-thumb" data-theme="dark">
+                  <span class="theme-thumb__preview"></span>
+                  <span class="theme-thumb__label">Dark</span>
+                </button>
+                <button type="button" class="theme-thumb" data-theme="neon">
+                  <span class="theme-thumb__preview"></span>
+                  <span class="theme-thumb__label">Neon</span>
+                </button>
+                <button type="button" class="theme-thumb" data-theme="crimson">
+                  <span class="theme-thumb__preview"></span>
+                  <span class="theme-thumb__label">Crimson</span>
+                </button>
+                <button type="button" class="theme-thumb" data-theme="grass">
+                  <span class="theme-thumb__preview"></span>
+                  <span class="theme-thumb__label">Grass</span>
+                </button>
+              </div>
+            </div>
+            <div class="setting-row">
+              <span class="setting-row__label">Zoom</span>
+              <select id="zoom-select" class="select" aria-label="Zoom">
+                <option value="0.5">50%</option>
+                <option value="0.75">75%</option>
+                <option value="1">100%</option>
+                <option value="1.5">150%</option>
+                <option value="2">200%</option>
+              </select>
+            </div>
+
+            <section class="settings-section">
+              <div class="settings-section__header">
+                <span class="settings-section__title">홈 화면 커뮤니티 버튼</span>
+                <div class="settings-section__actions">
+                  <button type="button" class="btn-ghost" id="btn-link-add" data-tooltip="추가" aria-label="추가">+ 추가</button>
+                  <button type="button" class="btn-ghost" id="btn-link-restore" data-tooltip="기본값으로 복원" aria-label="기본값으로 복원">기본값</button>
+                </div>
+              </div>
+              <form class="link-editor" id="link-editor" hidden>
+                <input name="name" class="link-editor__input" placeholder="이름" required />
+                <input name="description" class="link-editor__input" placeholder="설명 (선택)" />
+                <input name="url" type="url" class="link-editor__input" placeholder="https://..." required />
+                <div class="link-editor__actions">
+                  <button type="button" class="btn-ghost" id="btn-link-cancel">취소</button>
+                  <button type="submit" class="btn-primary">저장</button>
+                </div>
+              </form>
+              <ul class="link-list" id="link-list"></ul>
+            </section>
+
+            <section class="settings-section settings-section--danger">
+              <div class="settings-section__header">
+                <span class="settings-section__title">Danger Zone</span>
+              </div>
+              <button type="button" class="btn-danger" id="btn-reset-data" aria-label="앱 데이터 초기화">앱 데이터 초기화</button>
+            </section>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="dist/tooltip.js"></script>
+    <script src="dist/renderer.js"></script>
+  </body>
+</html>

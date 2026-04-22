@@ -1,0 +1,64 @@
+{
+  "name": "outerplane-app",
+  "version": "0.1.0",
+  "description": "아우터플레인 보조 도구 (커뮤니티 바로가기 · 정밀 제작 자동 리롤)",
+  "author": "Outerplane App",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "start": "npm run build && electron .",
+    "test": "tsc && node --test \"dist/detect/__tests__/*.test.js\" \"dist/craft/__tests__/*.test.js\"",
+    "craft:console": "tsc && node dist/craft/runner-console.js",
+    "dist": "npm run build && electron-builder --win zip --x64"
+  },
+  "build": {
+    "appId": "com.outerplane.app",
+    "productName": "OuterplaneApp",
+    "directories": {
+      "output": "release"
+    },
+    "afterPack": "./scripts/afterPack.cjs",
+    "files": [
+      "dist/**/*",
+      "!dist/**/__tests__/**",
+      "!dist/craft/runner-console.*",
+      "index.html",
+      "glow.html",
+      "picker-backdrop.html",
+      "picker-overlay.html",
+      "style.css",
+      "assets/**/*",
+      "package.json"
+    ],
+    "extraMetadata": {
+      "main": "dist/main.js"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "zip",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "${productName}-${version}-win-x64.zip",
+      "icon": "assets/icon.ico",
+      "signAndEditExecutable": false
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "@types/pngjs": "^6.0.5",
+    "electron": "^30.0.0",
+    "electron-builder": "^26.8.1",
+    "png-to-ico": "^3.0.1",
+    "pngjs": "^7.0.0",
+    "rcedit": "^5.0.2",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "koffi": "^2.16.1"
+  }
+}
