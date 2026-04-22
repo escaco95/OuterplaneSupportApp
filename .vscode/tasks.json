@@ -4,8 +4,8 @@
     {
       "label": "tsc: build",
       "type": "shell",
-      "command": "npx",
-      "args": ["tsc"],
+      "command": "npm",
+      "args": ["run", "build"],
       "group": "build",
       "problemMatcher": ["$tsc"],
       "presentation": {

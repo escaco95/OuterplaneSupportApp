@@ -16,7 +16,7 @@ import { scan } from '../index.js';
 
 // npm test runs from project root, so fixtures live at this stable path.
 const REPO_ROOT = process.cwd();
-const FIXTURE_DIR = path.join(REPO_ROOT, 'src', 'detect', '__tests__', 'fixtures');
+const FIXTURE_DIR = path.join(REPO_ROOT, 'src', 'main', 'detect', '__tests__', 'fixtures');
 const SCREEN_PROFILE_PATH = path.join(REPO_ROOT, 'assets', 'profiles', 'precision-craft.json');
 const STAT_REFS_PATH = path.join(REPO_ROOT, 'assets', 'profiles', 'stat-references.json');
 

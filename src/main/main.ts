@@ -172,12 +172,12 @@ function createBackdrop(): BrowserWindow {
     hasShadow: false,
     show: false,
     webPreferences: {
-      preload: path.join(__dirname, 'picker-preload.js'),
+      preload: path.join(__dirname, '..', 'preload', 'picker.js'),
       contextIsolation: true,
     },
   });
   backdrop.setAlwaysOnTop(true, 'floating');
-  backdrop.loadFile(path.join(__dirname, '..', 'picker-backdrop.html'));
+  backdrop.loadFile(path.join(__dirname, '..', 'renderer', 'picker-backdrop.html'));
   backdrop.once('ready-to-show', () => backdrop.showInactive());
   return backdrop;
 }
@@ -201,12 +201,12 @@ function createPickerOverlay(physical: NativeRect, key: string): BrowserWindow |
     hasShadow: false,
     show: false,
     webPreferences: {
-      preload: path.join(__dirname, 'picker-preload.js'),
+      preload: path.join(__dirname, '..', 'preload', 'picker.js'),
       contextIsolation: true,
     },
   });
   overlay.setAlwaysOnTop(true, 'screen-saver');
-  overlay.loadFile(path.join(__dirname, '..', 'picker-overlay.html'), {
+  overlay.loadFile(path.join(__dirname, '..', 'renderer', 'picker-overlay.html'), {
     query: { key },
   });
   overlay.once('ready-to-show', () => overlay.showInactive());
@@ -252,7 +252,7 @@ let precisionProfile: ScreenProfile | null = null;
 let statRefs: StatReferences | null = null;
 
 function profilesDir(): string {
-  return path.join(__dirname, '..', 'assets', 'profiles');
+  return path.join(__dirname, '..', '..', 'assets', 'profiles');
 }
 
 function craftStatePath(): string {
@@ -484,13 +484,13 @@ function startGlow(key: string): void {
     hasShadow: false,
     show: false,
     webPreferences: {
-      preload: path.join(__dirname, 'glow-preload.js'),
+      preload: path.join(__dirname, '..', 'preload', 'glow.js'),
       contextIsolation: true,
     },
   });
   overlay.setIgnoreMouseEvents(true, { forward: true });
   overlay.setAlwaysOnTop(true, 'floating');
-  overlay.loadFile(path.join(__dirname, '..', 'glow.html'));
+  overlay.loadFile(path.join(__dirname, '..', 'renderer', 'glow.html'));
 
   const initialBoundsKey = applyGlowBounds(overlay, rect) ?? '';
   const initialSizeState = validateRender(rect);
@@ -586,7 +586,7 @@ function createWindow(): void {
     frame: false,
     backgroundColor: '#f7f7f8',
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, '..', 'preload', 'main.js'),
       contextIsolation: true,
     },
   });
@@ -644,7 +644,7 @@ function createWindow(): void {
   win.on('maximize', () => win.webContents.send('window:maximized', true));
   win.on('unmaximize', () => win.webContents.send('window:maximized', false));
 
-  win.loadFile(path.join(__dirname, '..', 'index.html'));
+  win.loadFile(path.join(__dirname, '..', 'renderer', 'index.html'));
 }
 
 /**

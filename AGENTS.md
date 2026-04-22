@@ -27,13 +27,19 @@
 .temp/            dev 산출물 (캡처·ROI·crop·상태 스냅샷), gitignored
 .vscode/          IDE 설정
 assets/           런타임 리소스 (아이콘, 프로파일 JSON)
-dist/             tsc 출력, gitignored
+dist/             tsc 출력, gitignored (main/ preload/ renderer/ 구조 보존)
 release/          electron-builder 출력 (zip), gitignored
 node_modules/     의존성, gitignored
-src/              TypeScript 소스
-  craft/          자동 리롤 루프 컨트롤러·상태 지속·settle·match
-  detect/          캡처 정규화·화면 검증·스탯/랭크 스캔 (binary mask + IoU)
+scripts/          빌드 훅 (afterPack · copy-renderer-assets)
+src/              TypeScript 소스 — 환경별로 분리
+  main/           Electron main process (Node + koffi, DOM 사용 금지)
+    craft/        자동 리롤 루프 컨트롤러·상태 지속·settle·match
+    detect/       캡처 정규화·화면 검증·스탯/랭크 스캔 (binary mask + IoU)
+  preload/        contextBridge 스크립트 (main ↔ renderer IPC 노출)
+  renderer/       브라우저 환경 — HTML · CSS · DOM 코드 (tsc 빌드 시 HTML/CSS 는 copy 스크립트로 dist 반영)
 ```
+
+tsconfig 는 프로젝트 레퍼런스로 분리 — `tsconfig.main.json` (main + preload, DOM lib 제외) 과 `tsconfig.renderer.json` (renderer, DOM lib 포함). 루트 `tsconfig.json` 은 두 프로젝트를 묶는 solution-style 파일이며 `tsc -b` 로 빌드.
 
 ### Versioning
 

@@ -3,13 +3,13 @@
   "version": "2026.04.22",
   "description": "아우터플레인 보조 도구 (커뮤니티 바로가기 · 정밀 제작 자동 리롤)",
   "author": "Outerplane App",
-  "main": "dist/main.js",
+  "main": "dist/main/main.js",
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
+    "build": "tsc -b && node scripts/copy-renderer-assets.cjs",
+    "watch": "tsc -b -w",
     "start": "npm run build && electron .",
-    "test": "tsc && node --test \"dist/detect/__tests__/*.test.js\" \"dist/craft/__tests__/*.test.js\"",
-    "craft:console": "tsc && node dist/craft/runner-console.js",
+    "test": "npm run build && node --test \"dist/main/detect/__tests__/*.test.js\" \"dist/main/craft/__tests__/*.test.js\"",
+    "craft:console": "npm run build && node dist/main/craft/runner-console.js",
     "dist": "npm run build && electron-builder --win zip --x64"
   },
   "build": {
@@ -21,18 +21,13 @@
     "afterPack": "./scripts/afterPack.cjs",
     "files": [
       "dist/**/*",
-      "!dist/**/__tests__/**",
-      "!dist/craft/runner-console.*",
-      "index.html",
-      "glow.html",
-      "picker-backdrop.html",
-      "picker-overlay.html",
-      "style.css",
+      "!dist/main/**/__tests__/**",
+      "!dist/main/craft/runner-console.*",
       "assets/**/*",
       "package.json"
     ],
     "extraMetadata": {
-      "main": "dist/main.js"
+      "main": "dist/main/main.js"
     },
     "win": {
       "target": [
