@@ -45,9 +45,9 @@ src/              TypeScript 소스
 ### Release / Packaging
 
 - do only when user explicitly requests a release or packaging
-- fetch latest icon (see `create-app-icon` skill)
-- perform version bump
-- commit changes
+- always run `create-app-icon` skill — it is idempotent and only rewrites `assets/icon.ico` when the Play Store source differs (`[RESULT] updated|created` vs `unchanged`); commit the icon only when it actually changed
+- perform version bump in `package.json`
+- commit pending changes (version bump, plus the icon if it was updated)
 - tag release
 - build package (`npm run dist`)
 
