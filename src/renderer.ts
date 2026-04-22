@@ -429,12 +429,10 @@ const CRAFT_LOG_CAP = 100;
 type CraftView = 'idle' | 'running' | 'terminal';
 
 const craftValuableBox = $<HTMLDivElement>('craft-valuable');
-const craftTemplateInputs = Array.from(
-  document.querySelectorAll<HTMLInputElement>('.craft-template__input[data-set="0"]')
-);
-const craftTemplate2Inputs = Array.from(
-  document.querySelectorAll<HTMLInputElement>('.craft-template__input[data-set="1"]')
-);
+const craftTemplateContainers: [HTMLElement, HTMLElement] = [
+  $<HTMLDivElement>('craft-template-0'),
+  $<HTMLDivElement>('craft-template-1'),
+];
 const craftTemplate2Toggle = $<HTMLInputElement>('craft-template2-toggle');
 const craftTemplate2Row = document.querySelector<HTMLElement>('.craft-template-row--alt')!;
 const craftTemplateHint = $<HTMLDivElement>('craft-template-hint');
@@ -491,12 +489,40 @@ function renderCraftValuable(): void {
   }
 }
 
-function readTemplateFrom(inputs: HTMLInputElement[]): [number, number, number, number] {
-  const vals = inputs.map((inp) => {
-    let n = parseInt(inp.value, 10);
-    if (!Number.isFinite(n) || n < 0) n = 0;
-    if (n > 4) n = 4;
-    return n;
+const TEMPLATE_MAX_RANK = 3;
+
+function buildTemplateSet(container: HTMLElement, defaults: number[]): void {
+  container.replaceChildren();
+  for (let rowIdx = 0; rowIdx < 4; rowIdx++) {
+    const initial = Math.max(0, Math.min(TEMPLATE_MAX_RANK, defaults[rowIdx] ?? 0));
+    const row = document.createElement('div');
+    row.className = 'craft-seg-row';
+    row.dataset.rank = String(initial);
+    row.dataset.row = String(rowIdx);
+    for (let seg = 1; seg <= TEMPLATE_MAX_RANK; seg++) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'craft-seg';
+      btn.dataset.rank = String(seg);
+      btn.setAttribute('aria-label', `행 ${rowIdx + 1} 위력 ${seg}`);
+      btn.addEventListener('click', () => {
+        const current = Number(row.dataset.rank ?? '0');
+        row.dataset.rank = String(current === seg ? 0 : seg);
+        updateTemplateHint();
+      });
+      row.appendChild(btn);
+    }
+    container.appendChild(row);
+  }
+}
+
+function readTemplateFromSet(setIdx: 0 | 1): [number, number, number, number] {
+  const rows = Array.from(
+    craftTemplateContainers[setIdx].querySelectorAll<HTMLElement>('.craft-seg-row')
+  );
+  const vals = rows.slice(0, 4).map((r) => {
+    const n = Number(r.dataset.rank ?? '0');
+    return Number.isFinite(n) && n >= 0 && n <= TEMPLATE_MAX_RANK ? n : 0;
   });
   while (vals.length < 4) vals.push(0);
   return [vals[0], vals[1], vals[2], vals[3]];
@@ -516,9 +542,9 @@ function describeTemplate(tpl: [number, number, number, number]): string {
 }
 
 function updateTemplateHint(): void {
-  const descs = [describeTemplate(readTemplateFrom(craftTemplateInputs))];
+  const descs = [describeTemplate(readTemplateFromSet(0))];
   if (craftTemplate2Toggle.checked) {
-    descs.push(describeTemplate(readTemplateFrom(craftTemplate2Inputs)));
+    descs.push(describeTemplate(readTemplateFromSet(1)));
   }
   craftTemplateHint.textContent = descs.join('  또는  ');
 }
@@ -526,7 +552,6 @@ function updateTemplateHint(): void {
 function applyTemplate2State(): void {
   const on = craftTemplate2Toggle.checked;
   craftTemplate2Row.dataset.enabled = on ? 'true' : 'false';
-  for (const inp of craftTemplate2Inputs) inp.disabled = !on;
   updateTemplateHint();
 }
 
@@ -587,12 +612,8 @@ function setProgress(iter: number, max: number): void {
   craftProgressFill.style.width = `${pct}%`;
 }
 
-for (const inp of craftTemplateInputs) {
-  inp.addEventListener('input', updateTemplateHint);
-}
-for (const inp of craftTemplate2Inputs) {
-  inp.addEventListener('input', updateTemplateHint);
-}
+buildTemplateSet(craftTemplateContainers[0], [3, 3, 3, 0]);
+buildTemplateSet(craftTemplateContainers[1], [3, 3, 2, 2]);
 craftTemplate2Toggle.addEventListener('change', applyTemplate2State);
 applyTemplate2State();
 
@@ -611,9 +632,9 @@ craftStartBtn.addEventListener('click', async () => {
     alert('원하는 스탯을 하나 이상 선택해주세요.');
     return;
   }
-  const templates: Array<[number, number, number, number]> = [readTemplateFrom(craftTemplateInputs)];
+  const templates: Array<[number, number, number, number]> = [readTemplateFromSet(0)];
   if (craftTemplate2Toggle.checked) {
-    templates.push(readTemplateFrom(craftTemplate2Inputs));
+    templates.push(readTemplateFromSet(1));
   }
   const maxIter = Math.max(1, Math.min(1000, parseInt(craftMaxInput.value, 10) || 50));
   craftCurrentMax = maxIter;

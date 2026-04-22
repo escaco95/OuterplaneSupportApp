@@ -77,27 +77,17 @@
                 </div>
 
                 <div class="craft-field">
-                  <span class="craft-field__label" data-tooltip="각 슬롯에 필요한 최소 위력. 0 = 무관. 위치 무시 — 집합으로 매칭. 두 번째 패턴 켜면 둘 중 하나라도 만족 시 완성.">위력 요구사항</span>
+                  <span class="craft-field__label" data-tooltip="각 행의 최소 위력(0~3). 같은 세그먼트를 다시 누르면 0 으로 초기화. 위치 무시 — 집합으로 매칭. 두 번째 패턴 켜면 둘 중 하나라도 만족 시 완성.">위력 요구사항</span>
                   <div class="craft-template-row">
                     <span class="craft-template-row__lead" aria-hidden="true"></span>
-                    <div class="craft-template">
-                      <input type="number" min="0" max="4" class="craft-template__input" data-set="0" data-slot="0" value="3" aria-label="패턴 1 slot 1" />
-                      <input type="number" min="0" max="4" class="craft-template__input" data-set="0" data-slot="1" value="3" aria-label="패턴 1 slot 2" />
-                      <input type="number" min="0" max="4" class="craft-template__input" data-set="0" data-slot="2" value="3" aria-label="패턴 1 slot 3" />
-                      <input type="number" min="0" max="4" class="craft-template__input" data-set="0" data-slot="3" value="0" aria-label="패턴 1 slot 4" />
-                    </div>
+                    <div class="craft-template" data-set="0" id="craft-template-0"></div>
                   </div>
                   <div class="craft-template-row craft-template-row--alt" data-enabled="false">
                     <label class="craft-template-row__toggle" data-tooltip="두 번째 패턴 사용 — 두 패턴 중 하나라도 만족 시 완성" aria-label="두 번째 패턴 사용">
                       <input type="checkbox" id="craft-template2-toggle" />
                       <svg class="craft-template-row__toggle-icon" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 3.5v9M3.5 8h9"/></svg>
                     </label>
-                    <div class="craft-template">
-                      <input type="number" min="0" max="4" class="craft-template__input" data-set="1" data-slot="0" value="3" aria-label="패턴 2 slot 1" disabled />
-                      <input type="number" min="0" max="4" class="craft-template__input" data-set="1" data-slot="1" value="3" aria-label="패턴 2 slot 2" disabled />
-                      <input type="number" min="0" max="4" class="craft-template__input" data-set="1" data-slot="2" value="2" aria-label="패턴 2 slot 3" disabled />
-                      <input type="number" min="0" max="4" class="craft-template__input" data-set="1" data-slot="3" value="2" aria-label="패턴 2 slot 4" disabled />
-                    </div>
+                    <div class="craft-template" data-set="1" id="craft-template-1"></div>
                   </div>
                   <div class="craft-field__hint" id="craft-template-hint"></div>
                 </div>

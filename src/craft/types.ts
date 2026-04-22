@@ -1,14 +1,17 @@
 import type { ScanRow } from '../detect/types.js';
 
 /**
- * Rank template — one entry per UI row (0–4):
+ * Rank template — one entry per UI row (0–3):
  *   0 = don't care (this slot can be any stat at any rank)
- *   N (1–4) = "a valuable stat of rank ≥ N must appear in SOME row"
+ *   N (1–3) = "a valuable stat of rank ≥ N must appear in SOME row"
  *
  * Position-agnostic: the template is a multiset of minimum-rank requirements,
  * matched against the actual 4 rows via the match.ts algorithm. So a template
  * of [3,3,3,0] demands that 3 of the 4 rows be (rank≥3 AND valuable), with
  * the 4th row unconstrained.
+ *
+ * Max rank is capped at 3 because the in-game sub-option bar, though drawn
+ * with 4 segments, never fills more than 3 for precision-craft rolls.
  *
  * Mirrors the in-game 위력 UI visually in the config form even though matching
  * ignores the specific row each value is entered in.

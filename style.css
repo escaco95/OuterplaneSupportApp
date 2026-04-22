@@ -712,31 +712,36 @@ html, body {
   background: color-mix(in srgb, var(--accent) 12%, var(--surface));
   transform: rotate(45deg);
 }
-.craft-template-row--alt[data-enabled="false"] .craft-template { opacity: 0.35; }
+.craft-template-row--alt[data-enabled="false"] .craft-template {
+  opacity: 0.35;
+  pointer-events: none;
+}
 
 .craft-template {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.craft-seg-row {
   display: grid;
-  grid-template-columns: repeat(4, 56px);
-  gap: 8px;
+  grid-template-columns: repeat(3, 56px);
+  gap: 3px;
 }
-.craft-template__input {
-  width: 56px;
-  height: 48px;
-  text-align: center;
-  font-size: 20px;
-  font-weight: 600;
+.craft-seg {
+  height: 14px;
+  padding: 0;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 2px;
   background: var(--surface);
-  color: var(--text);
+  cursor: pointer;
+  transition: background 120ms, border-color 120ms;
 }
-.craft-template__input:focus {
-  outline: none;
+.craft-seg:hover { border-color: var(--accent); }
+.craft-seg-row[data-rank="1"] .craft-seg:nth-child(-n+1),
+.craft-seg-row[data-rank="2"] .craft-seg:nth-child(-n+2),
+.craft-seg-row[data-rank="3"] .craft-seg:nth-child(-n+3) {
+  background: var(--accent);
   border-color: var(--accent);
-}
-.craft-template__input:disabled {
-  cursor: not-allowed;
-  color: var(--text-muted);
 }
 
 .craft-max {

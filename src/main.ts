@@ -663,7 +663,7 @@ function coerceConfig(raw: unknown): CraftConfig | null {
     const nums: number[] = [];
     for (const t of raw) {
       const n = Number(t);
-      if (!Number.isInteger(n) || n < 0 || n > 4) return null;
+      if (!Number.isInteger(n) || n < 0 || n > 3) return null;
       nums.push(n);
     }
     return nums as unknown as Template;
