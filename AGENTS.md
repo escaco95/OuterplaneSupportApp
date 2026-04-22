@@ -53,6 +53,10 @@ src/              TypeScript 소스
 
 ### commit message
 
+1. use english for commit messages
+2. split changes into small, focused commits
+3. use present tense ("add feature" not "added feature")
+
 - feat: {feature}
   - describe a new feature added to the app
 - fix: {bug fix}
