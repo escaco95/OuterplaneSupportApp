@@ -45,7 +45,6 @@ interface CraftConfigDto {
   valuable: string[];
   template: [number, number, number, number];
   maxIter: number;
-  assumedHitRate: number;
 }
 
 interface CraftSessionState {

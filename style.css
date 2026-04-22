@@ -677,7 +677,6 @@ html, body {
   background: var(--surface);
 }
 .craft-cumulative__line { margin: 2px 0; }
-.craft-cumulative__luck--unlucky { color: var(--danger); }
 
 .craft-actions {
   margin-top: 14px;

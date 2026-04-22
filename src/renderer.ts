@@ -355,10 +355,6 @@ applyZoom(ZOOM_LEVELS.includes(savedZoom) ? savedZoom : DEFAULT_ZOOM);
 // Kept in renderer state (not persisted) — user re-enters config each session.
 // If persistence becomes desirable, dump to localStorage on start.
 const CRAFT_LOG_CAP = 100;
-// Hidden from UI but surfaced in the luck hint. Roughly tuned to observed rate
-// across items (see SKILL.md). Not user-visible because the number only
-// influences a soft UX hint, not any decision logic.
-const CRAFT_ASSUMED_HIT_RATE = 0.002;
 
 type CraftView = 'idle' | 'running' | 'terminal';
 
@@ -448,27 +444,12 @@ function updateTemplateHint(): void {
   craftTemplateHint.textContent = parts.join(' · ');
 }
 
-function luckLine(streak: number, p: number): string {
-  if (streak <= 0) return '운: — (이전 hit 직후 또는 첫 시도)';
-  const probNoHit = Math.pow(1 - p, streak);
-  const pct = (probNoHit * 100).toFixed(2);
-  return `운: 하위 ${pct}% (p=${(p * 100).toFixed(1)}% 가정, streak ${streak})`;
-}
-
 function refreshCumulative(s: CraftSessionState): void {
   craftCumulativeEl.innerHTML = '';
   const l1 = document.createElement('div');
   l1.className = 'craft-cumulative__line';
   l1.textContent = `누적: ${s.totalAttempts} 시도 · ${s.totalHits} 성공 · 현재 streak ${s.currentStreak} (최장 ${s.longestStreak})`;
-  const l2 = document.createElement('div');
-  l2.className = 'craft-cumulative__line';
-  const ll = luckLine(s.currentStreak, CRAFT_ASSUMED_HIT_RATE);
-  l2.textContent = ll;
-  if (s.currentStreak > 0) {
-    const probNoHit = Math.pow(1 - CRAFT_ASSUMED_HIT_RATE, s.currentStreak);
-    if (probNoHit < 0.05) l2.classList.add('craft-cumulative__luck--unlucky');
-  }
-  craftCumulativeEl.append(l1, l2);
+  craftCumulativeEl.append(l1);
 }
 
 function renderPreview(target: HTMLElement, rows: CraftScanRow[], valuable: Set<string>): void {
@@ -553,7 +534,6 @@ craftStartBtn.addEventListener('click', async () => {
     valuable: Array.from(valuableChecked),
     template,
     maxIter,
-    assumedHitRate: CRAFT_ASSUMED_HIT_RATE,
   });
   if (!res.ok) {
     renderTerminal({
@@ -656,7 +636,6 @@ window.craft.onEvent((e) => {
             label: '누적',
             value: `${e.state.totalAttempts} 시도 · ${e.state.totalHits} 성공 · 현재 streak ${e.state.currentStreak}`,
           },
-          { label: '운', value: luckLine(e.state.currentStreak, CRAFT_ASSUMED_HIT_RATE) },
         ],
       });
       break;

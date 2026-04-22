@@ -667,14 +667,11 @@ function coerceConfig(raw: unknown): CraftConfig | null {
     : null;
   if (!valuable || !template || template.some((t) => t === null)) return null;
   const maxIter = Number(r.maxIter);
-  const assumedHitRate = Number(r.assumedHitRate);
   if (!Number.isFinite(maxIter) || maxIter < 1 || maxIter > 1000) return null;
-  if (!Number.isFinite(assumedHitRate) || assumedHitRate <= 0 || assumedHitRate >= 1) return null;
   return {
     valuable,
     template: template as unknown as Template,
     maxIter: Math.floor(maxIter),
-    assumedHitRate,
   };
 }
 

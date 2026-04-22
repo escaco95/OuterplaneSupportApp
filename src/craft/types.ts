@@ -22,11 +22,6 @@ export interface CraftConfig {
   template: Template;
   /** Upper bound on reroll iterations before giving up. */
   maxIter: number;
-  /**
-   * True hit rate guess, used only for the luck percentile UX hint.
-   * Not used for any decision logic; adjusting it doesn't change outcomes.
-   */
-  assumedHitRate: number;
 }
 
 export interface SessionState {
@@ -96,15 +91,6 @@ export type CraftEvent =
       state: SessionState;
       elapsedMs: number;
     };
-
-export interface LuckReport {
-  /** Probability of reaching this streak with no hit, given assumed p. */
-  probNoHit: number;
-  /** 100 × probNoHit, formatted for display. */
-  percentBottom: number;
-  /** Probability that a typical player has hit by now (= 1 − probNoHit). */
-  percentHitByNow: number;
-}
 
 /**
  * Adaptive-settle tuning. Poll cadence after a reroll click to detect the

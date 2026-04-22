@@ -31,7 +31,7 @@ dist/             tsc 출력, gitignored
 release/          electron-builder 출력 (zip), gitignored
 node_modules/     의존성, gitignored
 src/              TypeScript 소스
-  craft/          자동 리롤 루프 컨트롤러·상태 지속·settle·luck·match
+  craft/          자동 리롤 루프 컨트롤러·상태 지속·settle·match
   detect/          캡처 정규화·화면 검증·스탯/랭크 스캔 (binary mask + IoU)
 ```
 
@@ -41,6 +41,14 @@ src/              TypeScript 소스
   - YYYY.MM.DD(-PRERELEASE) 형식. 예: 2024.06.01, 2024.06.01-beta.1
 - Release Tag:
   - release/YYYY-MM-DD(-PRERELEASE) 형식. 예: release/2024-06-01, release/2024-06-01-beta-1
+
+### Release / Packaging
+
+- do only when user explicitly requests a release or packaging
+- perform version bump
+- commit changes
+- tag release
+- build package (`npm run dist`)
 
 ### .gitignore
 
@@ -87,7 +95,7 @@ release/
 - **자동 리롤**
   - 원하는 스탯(valuable) 다중 선택 (카탈로그 13종)
   - 4-슬롯 위력 템플릿 (0 = 무관, 1-4 = 해당 위력 이상 1개 필요; 위치 무시, multiset 매칭)
-  - 최대 시도 설정, 누적 시도/성공/streak 및 운 percentile 표시
+  - 최대 시도 설정, 누적 시도/성공/streak 표시
   - 실행 중: 실시간 iter 로그 (100줄 cap, 토글 가능) + live 프리뷰 + 진행바 + 중단 버튼
   - 종료 상태
     - HIT: 조건 일치 프리뷰 표시 → 사용자가 수동 확정

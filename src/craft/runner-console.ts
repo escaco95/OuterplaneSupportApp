@@ -18,7 +18,6 @@ import * as path from 'path';
 import { findLdplayerWindows } from '../ldplayer.js';
 import { loadScreenProfile, loadStatReferences } from '../detect/index.js';
 import { AutoRerollController } from './controller.js';
-import { computeLuck } from './luck.js';
 import { loadState } from './state-store.js';
 import type { CraftConfig, CraftEvent, Template } from './types.js';
 
@@ -27,7 +26,6 @@ const CONFIG: CraftConfig = {
   valuable: ['속도', '방어력%', '받는 피해 감소%', '효과 저항%'],
   template: [3, 3, 3, 0] as Template,
   maxIter: 50,
-  assumedHitRate: 0.002,
 };
 
 const REPO_ROOT = process.cwd();
@@ -58,13 +56,6 @@ async function main(): Promise<void> {
     `[start] cumulative: ${state.totalAttempts} attempts, ${state.totalHits} hits, ` +
       `current streak ${state.currentStreak} (longest ${state.longestStreak})`
   );
-  const preLuck = computeLuck(state.currentStreak, CONFIG.assumedHitRate);
-  if (state.currentStreak > 0) {
-    console.log(
-      `[luck] p=${(CONFIG.assumedHitRate * 100).toFixed(1)}% 가정, streak ${state.currentStreak}: ` +
-        `하위 ${preLuck.percentBottom.toFixed(2)}%`
-    );
-  }
 
   const controller = new AutoRerollController();
 
@@ -88,16 +79,11 @@ async function main(): Promise<void> {
         if (e.timedOut) console.log(`  [settle] TIMEOUT (${e.settleMs}ms cap hit)`);
         break;
       case 'hit': {
-        const luck = computeLuck(e.state.longestStreak, CONFIG.assumedHitRate);
         console.log(`STOP: HIT at iteration ${e.iter}`);
         console.log(`  elapsed: ${(e.elapsedMs / 1000).toFixed(1)}s`);
         console.log(
           `  cumulative: ${e.state.totalAttempts} attempts, ${e.state.totalHits} hits ` +
             `(longest streak was ${e.state.longestStreak}, reset to 0)`
-        );
-        console.log(
-          `  [luck] streak ${e.state.longestStreak} at p=${(CONFIG.assumedHitRate * 100).toFixed(1)}%: ` +
-            `하위 ${luck.percentBottom.toFixed(2)}%`
         );
         break;
       }
@@ -106,16 +92,11 @@ async function main(): Promise<void> {
         console.log(`  failed rows: [${e.failedRows.join(',')}]`);
         break;
       case 'limit': {
-        const luck = computeLuck(e.state.currentStreak, CONFIG.assumedHitRate);
         console.log(`STOP: LIMIT (${CONFIG.maxIter} iterations) — no hit`);
         console.log(`  elapsed: ${(e.elapsedMs / 1000).toFixed(1)}s`);
         console.log(
           `  cumulative: ${e.state.totalAttempts} attempts, ${e.state.totalHits} hits, ` +
             `current streak ${e.state.currentStreak} (longest ${e.state.longestStreak})`
-        );
-        console.log(
-          `  [luck] streak ${e.state.currentStreak} at p=${(CONFIG.assumedHitRate * 100).toFixed(1)}%: ` +
-            `하위 ${luck.percentBottom.toFixed(2)}%`
         );
         break;
       }
