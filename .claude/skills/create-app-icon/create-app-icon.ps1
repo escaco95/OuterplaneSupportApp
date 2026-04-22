@@ -140,14 +140,36 @@ for ($i = 0; $i -lt $n; $i++) {
 }
 $bw.Flush()
 
-# Ensure output directory exists.
-$outDir = [System.IO.Path]::GetDirectoryName($OutputPath)
-if ($outDir -and -not (Test-Path $outDir)) {
-  New-Item -ItemType Directory -Path $outDir -Force | Out-Null
-}
-[System.IO.File]::WriteAllBytes($OutputPath, $stream.ToArray())
+$newBytes = $stream.ToArray()
 $bw.Dispose()
 $stream.Dispose()
 
-"[4] Wrote $OutputPath ($n sizes, $offset bytes)"
+# Idempotent write: if the existing file is byte-identical, leave mtime alone
+# so release procedures can skip a no-op commit. The ICO assembly above is
+# deterministic given a stable Play Store source.
+$status = 'created'
+$willWrite = $true
+if (Test-Path $OutputPath) {
+  $existingBytes = [System.IO.File]::ReadAllBytes($OutputPath)
+  $same = ($existingBytes.Length -eq $newBytes.Length)
+  if ($same) {
+    for ($i = 0; $i -lt $newBytes.Length; $i++) {
+      if ($existingBytes[$i] -ne $newBytes[$i]) { $same = $false; break }
+    }
+  }
+  if ($same) { $willWrite = $false; $status = 'unchanged' } else { $status = 'updated' }
+}
+
+if ($willWrite) {
+  $outDir = [System.IO.Path]::GetDirectoryName($OutputPath)
+  if ($outDir -and -not (Test-Path $outDir)) {
+    New-Item -ItemType Directory -Path $outDir -Force | Out-Null
+  }
+  [System.IO.File]::WriteAllBytes($OutputPath, $newBytes)
+  "[4] Wrote $OutputPath ($n sizes, $($newBytes.Length) bytes)"
+} else {
+  "[4] Kept $OutputPath — identical $($newBytes.Length) bytes, skipped write"
+}
+
 "[DONE] Corner radius: $([math]::Round($CornerRadiusRatio * 100))% per side"
+"[RESULT] $status"
