@@ -56,6 +56,8 @@ tsconfig 는 프로젝트 레퍼런스로 분리 — `tsconfig.main.json` (main 
 - commit pending changes (version bump, plus the icon if it was updated)
 - tag release
 - build package (`npm run dist`)
+- push main + tag to `origin`
+- create GitHub Release via `gh release create <tag> release/*.zip --title <title> --notes <notes>`; add `--prerelease` for pre-1.0 / beta / rc versions
 
 ### commit message
 
