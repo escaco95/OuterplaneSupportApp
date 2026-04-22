@@ -1,0 +1,15 @@
+# Normalize line endings — keep LF in repo, checkout native on Windows.
+# Binary assets are auto-detected; explicit entries below cover edge cases
+# where auto-detection can misidentify (small PNGs, etc).
+* text=auto eol=lf
+
+*.png binary
+*.ico binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf

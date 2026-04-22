@@ -1,0 +1,19 @@
+### Node Modules ###
+node_modules/
+dist/
+
+### AI Agents ###
+.claude/settings.local.json
+.temp/
+
+### Release Artifacts ###
+release/
+
+### Logs ###
+*.log
+npm-debug.log*
+
+### OS ###
+Thumbs.db
+Desktop.ini
+.DS_Store

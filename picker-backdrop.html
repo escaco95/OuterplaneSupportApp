@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.35);
+        overflow: hidden;
+        cursor: crosshair;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      document.body.addEventListener('click', () => window.picker.cancel());
+    </script>
+  </body>
+</html>
