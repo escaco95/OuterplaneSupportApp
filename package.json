@@ -1,6 +1,6 @@
 {
   "name": "outerplane-app",
-  "version": "0.1.0",
+  "version": "2026.04.22",
   "description": "아우터플레인 보조 도구 (커뮤니티 바로가기 · 정밀 제작 자동 리롤)",
   "author": "Outerplane App",
   "main": "dist/main.js",
