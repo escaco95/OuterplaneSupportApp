@@ -360,8 +360,13 @@ type CraftView = 'idle' | 'running' | 'terminal';
 
 const craftValuableBox = $<HTMLDivElement>('craft-valuable');
 const craftTemplateInputs = Array.from(
-  document.querySelectorAll<HTMLInputElement>('.craft-template__input')
+  document.querySelectorAll<HTMLInputElement>('.craft-template__input[data-set="0"]')
 );
+const craftTemplate2Inputs = Array.from(
+  document.querySelectorAll<HTMLInputElement>('.craft-template__input[data-set="1"]')
+);
+const craftTemplate2Toggle = $<HTMLInputElement>('craft-template2-toggle');
+const craftTemplate2Row = document.querySelector<HTMLElement>('.craft-template-row--alt')!;
 const craftTemplateHint = $<HTMLDivElement>('craft-template-hint');
 const craftMaxInput = $<HTMLInputElement>('craft-max');
 const craftCumulativeEl = $<HTMLDivElement>('craft-cumulative');
@@ -416,8 +421,8 @@ function renderCraftValuable(): void {
   }
 }
 
-function readTemplate(): [number, number, number, number] {
-  const vals = craftTemplateInputs.map((inp) => {
+function readTemplateFrom(inputs: HTMLInputElement[]): [number, number, number, number] {
+  const vals = inputs.map((inp) => {
     let n = parseInt(inp.value, 10);
     if (!Number.isFinite(n) || n < 0) n = 0;
     if (n > 4) n = 4;
@@ -427,13 +432,9 @@ function readTemplate(): [number, number, number, number] {
   return [vals[0], vals[1], vals[2], vals[3]];
 }
 
-function updateTemplateHint(): void {
-  const tpl = readTemplate();
+function describeTemplate(tpl: [number, number, number, number]): string {
   const reqs = tpl.filter((r) => r > 0).sort((a, b) => b - a);
-  if (reqs.length === 0) {
-    craftTemplateHint.textContent = '모든 슬롯이 0 — 어떤 결과든 매칭됨 (의도 확인 필요)';
-    return;
-  }
+  if (reqs.length === 0) return '모든 슬롯 0 (어떤 결과든 매칭)';
   const counts = new Map<number, number>();
   for (const r of reqs) counts.set(r, (counts.get(r) ?? 0) + 1);
   const parts = Array.from(counts.entries())
@@ -441,7 +442,22 @@ function updateTemplateHint(): void {
     .map(([r, n]) => `위력 ${r}+ ${n}개`);
   const zeros = 4 - reqs.length;
   if (zeros > 0) parts.push(`자유 ${zeros}개`);
-  craftTemplateHint.textContent = parts.join(' · ');
+  return parts.join(' · ');
+}
+
+function updateTemplateHint(): void {
+  const descs = [describeTemplate(readTemplateFrom(craftTemplateInputs))];
+  if (craftTemplate2Toggle.checked) {
+    descs.push(describeTemplate(readTemplateFrom(craftTemplate2Inputs)));
+  }
+  craftTemplateHint.textContent = descs.join('  또는  ');
+}
+
+function applyTemplate2State(): void {
+  const on = craftTemplate2Toggle.checked;
+  craftTemplate2Row.dataset.enabled = on ? 'true' : 'false';
+  for (const inp of craftTemplate2Inputs) inp.disabled = !on;
+  updateTemplateHint();
 }
 
 function refreshCumulative(s: CraftSessionState): void {
@@ -504,6 +520,11 @@ function setProgress(iter: number, max: number): void {
 for (const inp of craftTemplateInputs) {
   inp.addEventListener('input', updateTemplateHint);
 }
+for (const inp of craftTemplate2Inputs) {
+  inp.addEventListener('input', updateTemplateHint);
+}
+craftTemplate2Toggle.addEventListener('change', applyTemplate2State);
+applyTemplate2State();
 
 craftLogToggle.addEventListener('click', () => {
   craftLogHidden = !craftLogHidden;
@@ -520,7 +541,10 @@ craftStartBtn.addEventListener('click', async () => {
     alert('원하는 스탯을 하나 이상 선택해주세요.');
     return;
   }
-  const template = readTemplate();
+  const templates: Array<[number, number, number, number]> = [readTemplateFrom(craftTemplateInputs)];
+  if (craftTemplate2Toggle.checked) {
+    templates.push(readTemplateFrom(craftTemplate2Inputs));
+  }
   const maxIter = Math.max(1, Math.min(1000, parseInt(craftMaxInput.value, 10) || 50));
   craftCurrentMax = maxIter;
   resetCraftLog();
@@ -532,7 +556,7 @@ craftStartBtn.addEventListener('click', async () => {
 
   const res = await window.craft.start({
     valuable: Array.from(valuableChecked),
-    template,
+    templates,
     maxIter,
   });
   if (!res.ok) {

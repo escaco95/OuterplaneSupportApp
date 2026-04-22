@@ -18,8 +18,12 @@ export type Template = readonly [number, number, number, number];
 export interface CraftConfig {
   /** Canonical stat strings the user cares about (e.g. "체력%", "속도"). */
   valuable: string[];
-  /** 4-slot rank template. 0 = don't care, 1–4 = min rank requirement. */
-  template: Template;
+  /**
+   * 1–2 rank templates (OR semantics): a preview is a HIT when ANY template
+   * matches. Lets the user express alternatives like "3,3,3,? or 3,3,2,2"
+   * that a single multiset can't capture.
+   */
+  templates: Template[];
   /** Upper bound on reroll iterations before giving up. */
   maxIter: number;
 }

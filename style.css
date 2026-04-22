@@ -635,6 +635,41 @@ html, body {
 }
 .craft-valuable__item input { display: none; }
 
+.craft-template-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.craft-template-row + .craft-template-row { margin-top: 6px; }
+.craft-template-row__lead {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+.craft-template-row__toggle {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: border-color 120ms, color 120ms, background 120ms, transform 120ms;
+}
+.craft-template-row__toggle:hover { border-color: var(--accent); color: var(--accent); }
+.craft-template-row__toggle input { display: none; }
+.craft-template-row--alt[data-enabled="true"] .craft-template-row__toggle {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  transform: rotate(45deg);
+}
+.craft-template-row--alt[data-enabled="false"] .craft-template { opacity: 0.35; }
+
 .craft-template {
   display: grid;
   grid-template-columns: repeat(4, 56px);
@@ -654,6 +689,10 @@ html, body {
 .craft-template__input:focus {
   outline: none;
   border-color: var(--accent);
+}
+.craft-template__input:disabled {
+  cursor: not-allowed;
+  color: var(--text-muted);
 }
 
 .craft-max {

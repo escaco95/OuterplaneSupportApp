@@ -150,7 +150,8 @@ export class AutoRerollController extends EventEmitter {
       }
 
       // Pattern match / miss → mutate state, possibly terminate on hit.
-      const hit = matches(result.rows, config.template, valuable);
+      // OR semantics across templates: any match wins.
+      const hit = config.templates.some((t) => matches(result.rows, t, valuable));
       registerAttempt(state, hit);
       if (hit) {
         emit({ type: 'hit', iter, rows: result.rows, state, elapsedMs: elapsed() });

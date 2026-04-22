@@ -43,7 +43,8 @@ interface Window {
 
 interface CraftConfigDto {
   valuable: string[];
-  template: [number, number, number, number];
+  /** 1 or 2 templates; OR semantics — hit when ANY matches. */
+  templates: Array<[number, number, number, number]>;
   maxIter: number;
 }
 

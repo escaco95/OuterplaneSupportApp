@@ -658,19 +658,25 @@ function coerceConfig(raw: unknown): CraftConfig | null {
   const valuable = Array.isArray(r.valuable)
     ? r.valuable.filter((v): v is string => typeof v === 'string')
     : null;
-  const template = Array.isArray(r.template) && r.template.length === 4
-    ? (r.template.map((t) => {
-        const n = Number(t);
-        if (!Number.isInteger(n) || n < 0 || n > 4) return null;
-        return n;
-      }) as Array<number | null>)
+  const coerceTemplate = (raw: unknown): Template | null => {
+    if (!Array.isArray(raw) || raw.length !== 4) return null;
+    const nums: number[] = [];
+    for (const t of raw) {
+      const n = Number(t);
+      if (!Number.isInteger(n) || n < 0 || n > 4) return null;
+      nums.push(n);
+    }
+    return nums as unknown as Template;
+  };
+  const templates = Array.isArray(r.templates) && r.templates.length >= 1 && r.templates.length <= 2
+    ? r.templates.map(coerceTemplate)
     : null;
-  if (!valuable || !template || template.some((t) => t === null)) return null;
+  if (!valuable || !templates || templates.some((t) => t === null)) return null;
   const maxIter = Number(r.maxIter);
   if (!Number.isFinite(maxIter) || maxIter < 1 || maxIter > 1000) return null;
   return {
     valuable,
-    template: template as unknown as Template,
+    templates: templates as Template[],
     maxIter: Math.floor(maxIter),
   };
 }

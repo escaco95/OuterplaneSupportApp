@@ -24,7 +24,7 @@ import type { CraftConfig, CraftEvent, Template } from './types.js';
 // --- Config: edit these, re-run. Kept inline so this file is self-contained. ---
 const CONFIG: CraftConfig = {
   valuable: ['속도', '방어력%', '받는 피해 감소%', '효과 저항%'],
-  template: [3, 3, 3, 0] as Template,
+  templates: [[3, 3, 3, 0] as Template],
   maxIter: 50,
 };
 
@@ -50,7 +50,8 @@ async function main(): Promise<void> {
   const state = await loadState(STATE_PATH);
 
   console.log(`[start] LDPlayer pid=${windows[0].pid} title="${windows[0].title}"`);
-  console.log(`[start] template=[${CONFIG.template.join(',')}] max=${CONFIG.maxIter}`);
+  const tplStr = CONFIG.templates.map((t) => `[${t.join(',')}]`).join(' OR ');
+  console.log(`[start] templates=${tplStr} max=${CONFIG.maxIter}`);
   console.log(`[start] valuable={${CONFIG.valuable.join(', ')}}`);
   console.log(
     `[start] cumulative: ${state.totalAttempts} attempts, ${state.totalHits} hits, ` +
